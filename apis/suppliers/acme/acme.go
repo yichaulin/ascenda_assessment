@@ -27,12 +27,13 @@ type ACMEData struct {
 const (
 	Pool           = "Pool"
 	BusinessCenter = "BusinessCenter"
-	WiFi           = "WiFi"
 	DryCleaning    = "DryCleaning"
 	Breakfast      = "Breakfast"
-	Aircon         = "Aircon"
-	BathTub        = "BathTub"
 	Bar            = "Bar"
+
+	Aircon  = "Aircon"
+	BathTub = "BathTub"
+	WiFi    = "WiFi"
 )
 
 func GetData(destination uint64, hotelIDs map[string]struct{}) (acmeData []ACMEData, err error) {

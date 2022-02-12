@@ -42,25 +42,25 @@ type Image struct {
 }
 
 const (
-	GeneralOutdoorPool    = "outdoor pool"
-	GeneralIndoorPool     = "indoor pool"
-	GeneralBusinessCenter = "business center"
-	GeneralChildcare      = "childcare"
-	GeneralParking        = "parking"
-	GeneralBar            = "bar"
-	GeneralDryCleaning    = "dry cleaning"
-	GeneralWifi           = "wifi"
-	GeneralBreakfast      = "breakfast"
-	GeneralConcierge      = "concierge"
+	OutdoorPool    = "outdoor pool"
+	IndoorPool     = "indoor pool"
+	BusinessCenter = "business center"
+	Childcare      = "childcare"
+	Parking        = "parking"
+	Bar            = "bar"
+	DryCleaning    = "dry cleaning"
+	Wifi           = "wifi"
+	Breakfast      = "breakfast"
+	Concierge      = "concierge"
 
-	RoomTv            = "tv"
-	RoomCoffeeMachine = "coffee machine"
-	RoomKettle        = "kettle"
-	RoomHairDryer     = "hair dryer"
-	RoomIron          = "iron"
-	RoomMinibar       = "minibar"
-	RoomBathtub       = "bathtub"
-	RoomAircon        = "aircon"
+	Tv            = "tv"
+	CoffeeMachine = "coffee machine"
+	Kettle        = "kettle"
+	HairDryer     = "hair dryer"
+	Iron          = "iron"
+	Minibar       = "minibar"
+	Bathtub       = "bathtub"
+	Aircon        = "aircon"
 )
 
 func GetData(destination uint64, hotelIDs map[string]struct{}) (paperfliesData []PaperfliesData, err error) {
@@ -92,25 +92,25 @@ func ParseAmenitiesToAmenityList(amenities Amenities) (general amen.AmenityList,
 	for _, a := range amenities.General {
 		a = strings.TrimSpace(a)
 		switch a {
-		case GeneralOutdoorPool:
+		case OutdoorPool:
 			general.Add(amen.OutdoorPool)
-		case GeneralIndoorPool:
+		case IndoorPool:
 			general.Add(amen.IndoorPool)
-		case GeneralBusinessCenter:
+		case BusinessCenter:
 			general.Add(amen.BusinessCenter)
-		case GeneralChildcare:
+		case Childcare:
 			general.Add(amen.Childcare)
-		case GeneralParking:
+		case Parking:
 			general.Add(amen.Parking)
-		case GeneralBar:
+		case Bar:
 			general.Add(amen.Bar)
-		case GeneralDryCleaning:
+		case DryCleaning:
 			general.Add(amen.DryCleaning)
-		case GeneralWifi:
+		case Wifi:
 			general.Add(amen.Wifi)
-		case GeneralBreakfast:
+		case Breakfast:
 			general.Add(amen.Breakfast)
-		case GeneralConcierge:
+		case Concierge:
 			general.Add(amen.Concierge)
 		default:
 			others.Add(a)
@@ -120,21 +120,21 @@ func ParseAmenitiesToAmenityList(amenities Amenities) (general amen.AmenityList,
 	for _, a := range amenities.Room {
 		a = strings.TrimSpace(a)
 		switch a {
-		case RoomTv:
+		case Tv:
 			room.Add(amen.Tv)
-		case RoomCoffeeMachine:
+		case CoffeeMachine:
 			room.Add(amen.CoffeeMachine)
-		case RoomKettle:
+		case Kettle:
 			room.Add(amen.Kettle)
-		case RoomHairDryer:
+		case HairDryer:
 			room.Add(amen.HairDryer)
-		case RoomIron:
+		case Iron:
 			room.Add(amen.Iron)
-		case RoomMinibar:
+		case Minibar:
 			room.Add(amen.Minibar)
-		case RoomAircon:
+		case Aircon:
 			room.Add(amen.Aircon)
-		case RoomBathtub:
+		case Bathtub:
 			room.Add(amen.Bathtub)
 		default:
 			others.Add(a)
