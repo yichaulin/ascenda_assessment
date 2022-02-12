@@ -6,6 +6,7 @@ import (
 
 	"ascenda_assessment/apis/resty"
 	"ascenda_assessment/configs"
+
 	amen "ascenda_assessment/utils/amenities"
 )
 
@@ -62,14 +63,23 @@ const (
 	RoomAircon        = "aircon"
 )
 
-func GetData() (paperfliesData []PaperfliesData, err error) {
+func GetData(destination uint64, hotelIDs map[string]struct{}) (paperfliesData []PaperfliesData, err error) {
 	url := configs.Cfg.Suppliers.Paperflies
 	resp, err := resty.Get(url)
 	if err != nil {
 		return paperfliesData, err
 	}
 
-	json.Unmarshal(resp.Body(), &paperfliesData)
+	tmp := []PaperfliesData{}
+	json.Unmarshal(resp.Body(), &tmp)
+
+	paperfliesData = make([]PaperfliesData, 0, len(tmp))
+	for _, hotel := range tmp {
+		_, matchHotelID := hotelIDs[hotel.HotelID]
+		if (matchHotelID && hotel.DestinationID == destination) || (len(hotelIDs) == 0 && hotel.DestinationID == destination) {
+			paperfliesData = append(paperfliesData, hotel)
+		}
+	}
 
 	return paperfliesData, nil
 }

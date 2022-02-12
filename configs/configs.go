@@ -1,11 +1,12 @@
 package configs
 
 import (
-	"ascenda_assessment/logger"
 	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v2"
+
+	"ascenda_assessment/logger"
 )
 
 type Configs struct {

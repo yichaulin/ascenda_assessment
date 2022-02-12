@@ -6,6 +6,7 @@ import (
 
 	"ascenda_assessment/apis/resty"
 	"ascenda_assessment/configs"
+
 	amen "ascenda_assessment/utils/amenities"
 )
 
@@ -34,14 +35,23 @@ const (
 	Bar            = "Bar"
 )
 
-func GetData() (acmeData []ACMEData, err error) {
+func GetData(destination uint64, hotelIDs map[string]struct{}) (acmeData []ACMEData, err error) {
 	url := configs.Cfg.Suppliers.ACME
 	resp, err := resty.Get(url)
 	if err != nil {
 		return acmeData, err
 	}
 
-	json.Unmarshal(resp.Body(), &acmeData)
+	tmp := []ACMEData{}
+	json.Unmarshal(resp.Body(), &tmp)
+
+	acmeData = make([]ACMEData, 0, len(tmp))
+	for _, hotel := range tmp {
+		_, matchHotelID := hotelIDs[hotel.ID]
+		if (matchHotelID && hotel.DestinationID == destination) || (len(hotelIDs) == 0 && hotel.DestinationID == destination) {
+			acmeData = append(acmeData, hotel)
+		}
+	}
 
 	return acmeData, nil
 }

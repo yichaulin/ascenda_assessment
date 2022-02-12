@@ -1,12 +1,16 @@
 package hotel
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
+
 	"ascenda_assessment/apis/suppliers/acme"
 	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
 	"ascenda_assessment/logger"
+
 	amen "ascenda_assessment/utils/amenities"
-	"strings"
 )
 
 type Hotel struct {
@@ -50,22 +54,38 @@ type ImageLink struct {
 	Description string `json:"description"`
 }
 
+var InputInvalidError = fmt.Errorf("Invalid Input. Both Hotel IDs and Destination are empty")
+
 func GetHotels(destination string, hotelIDs []string) (hotels []*Hotel, err error) {
+	if len(destination) == 0 && len(hotelIDs) == 0 {
+		return hotels, InputInvalidError
+	}
+
 	hm := make(hotelMap)
 
-	acmeData, err := acme.GetData()
+	destinationInt64, err := strconv.ParseUint(destination, 10, 64)
 	if err != nil {
-		logger.Error("Get ACME data failed", err)
+		return hotels, err
 	}
 
-	patagoniaData, err := patagonia.GetData()
-	if err != nil {
-		logger.Error("Get Patagonia data failed", err)
+	hotelIDList := map[string]struct{}{}
+	for _, id := range hotelIDs {
+		hotelIDList[id] = struct{}{}
 	}
 
-	paperflies, err := paperflies.GetData()
+	acmeData, err := acme.GetData(destinationInt64, hotelIDList)
 	if err != nil {
-		logger.Error("Get Paperflies data failed", err)
+		logger.Error("Get ACME data failed.", err)
+	}
+
+	patagoniaData, err := patagonia.GetData(destinationInt64, hotelIDList)
+	if err != nil {
+		logger.Error("Get Patagonia data failed.", err)
+	}
+
+	paperflies, err := paperflies.GetData(destinationInt64, hotelIDList)
+	if err != nil {
+		logger.Error("Get Paperflies data failed.", err)
 	}
 
 	hm.mergeACMEData(acmeData)

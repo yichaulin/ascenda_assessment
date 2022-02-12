@@ -6,6 +6,7 @@ import (
 
 	"ascenda_assessment/apis/resty"
 	"ascenda_assessment/configs"
+
 	amen "ascenda_assessment/utils/amenities"
 )
 
@@ -42,14 +43,23 @@ const (
 	Bar           = "Bar"
 )
 
-func GetData() (patagoniaData []PatagoniaData, err error) {
+func GetData(destination uint64, hotelIDs map[string]struct{}) (patagoniaData []PatagoniaData, err error) {
 	url := configs.Cfg.Suppliers.Patagonia
 	resp, err := resty.Get(url)
 	if err != nil {
 		return patagoniaData, err
 	}
 
-	json.Unmarshal(resp.Body(), &patagoniaData)
+	tmp := []PatagoniaData{}
+	json.Unmarshal(resp.Body(), &tmp)
+
+	patagoniaData = make([]PatagoniaData, 0, len(tmp))
+	for _, hotel := range tmp {
+		_, matchHotelID := hotelIDs[hotel.ID]
+		if (matchHotelID && hotel.DestinationID == destination) || (len(hotelIDs) == 0 && hotel.DestinationID == destination) {
+			patagoniaData = append(patagoniaData, hotel)
+		}
+	}
 
 	return patagoniaData, nil
 }
