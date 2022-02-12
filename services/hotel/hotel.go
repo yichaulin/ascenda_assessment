@@ -97,7 +97,11 @@ func newHotel() *Hotel {
 func (hm hotelMap) toHotelSlice() []*Hotel {
 	hotels := make([]*Hotel, 0, len(hm))
 	for _, h := range hm {
-		h.Amenities.ListToStringSlice()
+		amen.CleanGeneralListDuplicatedItem(h.Amenities.GeneralList)
+
+		h.Amenities.General = h.Amenities.GeneralList.ToStringSlice()
+		h.Amenities.Room = h.Amenities.RoomList.ToStringSlice()
+		h.Amenities.Others = h.Amenities.OthersList.ToStringSlice()
 		hotels = append(hotels, h)
 	}
 
@@ -223,10 +227,4 @@ func (hm hotelMap) mergePaperfliesData(paperfliesData []paperflies.PaperfliesDat
 		}
 		hotel.Images.Amenities = append(hotel.Images.Amenities, tmpImgs...)
 	}
-}
-
-func (a *Amenities) ListToStringSlice() {
-	a.General = a.GeneralList.ToStringSlice()
-	a.Room = a.RoomList.ToStringSlice()
-	a.Others = a.OthersList.ToStringSlice()
 }

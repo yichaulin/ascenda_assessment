@@ -25,6 +25,14 @@ const (
 	Minibar       = "minibar"
 )
 
+func CleanGeneralListDuplicatedItem(list AmenityList) {
+	_, hasOutdoorPool := list[OutdoorPool]
+	_, hasIndoorPool := list[IndoorPool]
+	if hasIndoorPool || hasOutdoorPool {
+		delete(list, Pool)
+	}
+}
+
 func (l AmenityList) ToStringSlice() []string {
 	s := make([]string, 0, len(l))
 	for k := range l {
