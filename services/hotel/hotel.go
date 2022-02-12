@@ -118,20 +118,6 @@ func newHotel() *Hotel {
 	return &hotel
 }
 
-func (hm hotelMap) toHotelSlice() []*Hotel {
-	hotels := make([]*Hotel, 0, len(hm))
-	for _, h := range hm {
-		amen.CleanGeneralListDuplicatedItem(h.Amenities.GeneralList)
-
-		h.Amenities.General = h.Amenities.GeneralList.ToStringSlice()
-		h.Amenities.Room = h.Amenities.RoomList.ToStringSlice()
-		h.Amenities.Others = h.Amenities.OthersList.ToStringSlice()
-		hotels = append(hotels, h)
-	}
-
-	return hotels
-}
-
 func (h *Hotel) setNameWithPriority(name string, supplier string) {
 	priority := namePriorityConfig[supplier]
 	if priority > h.namePriority {
