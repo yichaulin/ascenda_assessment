@@ -7,3 +7,7 @@ import (
 func Info(args interface{}) {
 	log.Info(args)
 }
+
+func Error(args interface{}) {
+	log.Error(args)
+}
