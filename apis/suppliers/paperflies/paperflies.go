@@ -42,6 +42,8 @@ type Image struct {
 }
 
 const (
+	SupplierName = "PAPERFLIES"
+
 	OutdoorPool    = "outdoor pool"
 	IndoorPool     = "indoor pool"
 	BusinessCenter = "business center"

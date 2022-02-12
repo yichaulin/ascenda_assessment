@@ -33,6 +33,8 @@ type Image struct {
 }
 
 const (
+	SupplierName = "PATAGONIA"
+
 	Aircon        = "Aircon"
 	Tv            = "Tv"
 	CoffeeMachine = "Coffee machine"

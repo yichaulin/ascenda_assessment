@@ -25,6 +25,8 @@ type ACMEData struct {
 }
 
 const (
+	SupplierName = "ACME"
+
 	Pool           = "Pool"
 	BusinessCenter = "BusinessCenter"
 	DryCleaning    = "DryCleaning"

@@ -14,24 +14,28 @@ import (
 )
 
 type Hotel struct {
-	ID                string     `json:"id"`
-	Destination       uint64     `json:"destination"`
-	Name              string     `json:"name"`
-	Location          *Location  `json:"location"`
-	Description       *string    `json:"description"`
-	Amenities         *Amenities `json:"amenities"`
-	Images            Images     `json:"images"`
-	BoodingConditions []string   `json:"booking_conditions"`
+	ID                  string     `json:"id"`
+	Destination         uint64     `json:"destination"`
+	Name                string     `json:"name"`
+	namePriority        uint       `json:"-"`
+	Location            *Location  `json:"location"`
+	Description         *string    `json:"description"`
+	descriptionPriority uint       `json:"-"`
+	Amenities           *Amenities `json:"amenities"`
+	Images              Images     `json:"images"`
+	BookingConditions   []string   `json:"booking_conditions"`
 }
 
-type hotelMap map[string]*Hotel
-
 type Location struct {
-	Lat     *float32 `json:"lat"`
-	Lng     *float32 `json:"lng"`
-	Address *string  `json:"address"`
-	City    *string  `json:"city"`
-	Country *string  `json:"country"`
+	Lat             *float32 `json:"lat"`
+	Lng             *float32 `json:"lng"`
+	latLngPriority  uint     `json:"-"`
+	Address         *string  `json:"address"`
+	addressPriority uint     `json:"-"`
+	City            *string  `json:"city"`
+	cityPriority    uint     `json:"-"`
+	Country         *string  `json:"country"`
+	countryPriority uint     `json:"-"`
 }
 
 type Amenities struct {
@@ -103,7 +107,7 @@ func newHotel() *Hotel {
 			RoomList:    amen.AmenityList{},
 			OthersList:  amen.AmenityList{},
 		},
-		BoodingConditions: []string{},
+		BookingConditions: []string{},
 		Images: Images{
 			Rooms:     []ImageLink{},
 			Site:      []ImageLink{},
@@ -128,123 +132,75 @@ func (hm hotelMap) toHotelSlice() []*Hotel {
 	return hotels
 }
 
-func (hm hotelMap) mergeACMEData(acmeData []acme.ACMEData) {
-	for _, d := range acmeData {
-		hotel, ok := hm[d.ID]
-		if !ok {
-			hotel = newHotel()
-			hm[d.ID] = hotel
-		}
-
-		hotel.ID = d.ID
-		hotel.Destination = d.DestinationID
-		hotel.Name = d.Name
-		hotel.Location.Lat = d.Latitude
-		hotel.Location.Lng = d.Longitude
-		if d.Address != nil {
-			addr := strings.TrimSpace(*d.Address)
-			hotel.Location.Address = &addr
-		}
-		if d.Description != nil {
-			desc := strings.TrimSpace(*d.Description)
-			hotel.Description = &desc
-		}
-		if d.City != nil {
-			city := strings.TrimSpace(*d.City)
-			hotel.Location.City = &city
-		}
-
-		general, room, others := acme.ParseFacilitiesToAmenityList(d.Facilities)
-		hotel.Amenities.GeneralList.Merge(general)
-		hotel.Amenities.RoomList.Merge(room)
-		hotel.Amenities.OthersList.Merge(others)
+func (h *Hotel) setNameWithPriority(name string, supplier string) {
+	priority := namePriorityConfig[supplier]
+	if priority > h.namePriority {
+		h.Name = name
+		h.namePriority = priority
 	}
 }
 
-func (hm hotelMap) mergePatagoniaData(patagoniaData []patagonia.PatagoniaData) {
-	for _, d := range patagoniaData {
-		hotel, ok := hm[d.ID]
-		if !ok {
-			hotel = newHotel()
-			hm[d.ID] = hotel
-		}
+func (h *Hotel) setDescriptionWithPriority(description *string, supplier string) {
+	if description == nil {
+		return
+	}
 
-		hotel.ID = d.ID
-		hotel.Destination = d.DestinationID
-		hotel.Name = d.Name
-		hotel.Location.Lat = d.Lat
-		hotel.Location.Lng = d.Lng
-		if d.Info != nil {
-			desc := strings.TrimSpace(*d.Info)
-			hotel.Description = &desc
-		}
-		if d.Address != nil {
-			addr := strings.TrimSpace(*d.Address)
-			hotel.Location.Address = &addr
-		}
-
-		general, room, others := patagonia.ParseAmenitiesToAmenityList(d.Amenities)
-		hotel.Amenities.GeneralList.Merge(general)
-		hotel.Amenities.RoomList.Merge(room)
-		hotel.Amenities.OthersList.Merge(others)
-
-		tmpImgs := make([]ImageLink, len(d.Images.Rooms))
-		for i, roomImg := range d.Images.Rooms {
-			tmpImgs[i] = ImageLink{
-				Link:        roomImg.Url,
-				Description: roomImg.Description,
-			}
-		}
-		hotel.Images.Rooms = append(hotel.Images.Rooms, tmpImgs...)
-
-		tmpImgs = make([]ImageLink, len(d.Images.Amenities))
-		for i, amenImg := range d.Images.Amenities {
-			tmpImgs[i] = ImageLink{
-				Link:        amenImg.Url,
-				Description: amenImg.Description,
-			}
-		}
-		hotel.Images.Amenities = append(hotel.Images.Amenities, tmpImgs...)
+	priority := descriptionPriorityConfig[supplier]
+	if priority > h.descriptionPriority {
+		desc := strings.TrimSpace(*description)
+		h.Description = &desc
+		h.descriptionPriority = priority
 	}
 }
 
-func (hm hotelMap) mergePaperfliesData(paperfliesData []paperflies.PaperfliesData) {
-	for _, d := range paperfliesData {
-		hotel, ok := hm[d.HotelID]
-		if !ok {
-			hotel = newHotel()
-			hm[d.HotelID] = hotel
-		}
+func (l *Location) setCityWithPriority(city *string, supplier string) {
+	if city == nil {
+		return
+	}
 
-		hotel.ID = d.HotelID
-		hotel.Destination = d.DestinationID
-		hotel.Name = d.HotelName
-		hotel.Location.Address = d.Location.Address
-		hotel.Location.Country = d.Location.Country
-		hotel.Description = d.Details
-		hotel.BoodingConditions = d.BookingConditions
+	priority := cityPriorityConfig[supplier]
+	if priority > l.cityPriority {
+		c := strings.TrimSpace(*city)
+		l.City = &c
+		l.cityPriority = priority
+	}
+}
 
-		general, room, others := paperflies.ParseAmenitiesToAmenityList(d.Amenities)
-		hotel.Amenities.GeneralList.Merge(general)
-		hotel.Amenities.RoomList.Merge(room)
-		hotel.Amenities.OthersList.Merge(others)
+func (l *Location) setAddressWithPriority(address *string, supplier string) {
+	if address == nil {
+		return
+	}
 
-		tmpImgs := make([]ImageLink, len(d.Images.Rooms))
-		for i, roomImg := range d.Images.Rooms {
-			tmpImgs[i] = ImageLink{
-				Link:        roomImg.Link,
-				Description: roomImg.Caption,
-			}
-		}
-		hotel.Images.Rooms = append(hotel.Images.Rooms, tmpImgs...)
+	priority := addressPriorityConfig[supplier]
+	if priority > l.addressPriority {
+		addr := strings.TrimSpace(*address)
+		l.Address = &addr
+		l.addressPriority = priority
+	}
+}
 
-		tmpImgs = make([]ImageLink, len(d.Images.Site))
-		for i, amenImg := range d.Images.Site {
-			tmpImgs[i] = ImageLink{
-				Link:        amenImg.Link,
-				Description: amenImg.Caption,
-			}
-		}
-		hotel.Images.Amenities = append(hotel.Images.Amenities, tmpImgs...)
+func (l *Location) setLatLngWithPriority(lat *float32, lng *float32, supplier string) {
+	if lat == nil || lng == nil {
+		return
+	}
+
+	priority := latLngPriorityConfig[supplier]
+	if priority > l.latLngPriority {
+		l.Lat = lat
+		l.Lng = lng
+		l.latLngPriority = priority
+	}
+}
+
+func (l *Location) setCountryWithPriority(country *string, supplier string) {
+	if country == nil {
+		return
+	}
+
+	priority := countryPriorityConfig[supplier]
+	if priority > l.latLngPriority {
+		c := strings.TrimSpace(*country)
+		l.Country = &c
+		l.countryPriority = priority
 	}
 }
