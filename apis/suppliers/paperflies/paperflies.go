@@ -42,7 +42,7 @@ type Image struct {
 }
 
 const (
-	SupplierName = "PAPERFLIES"
+	SupplierName = "paperflies"
 
 	OutdoorPool    = "outdoor pool"
 	IndoorPool     = "indoor pool"

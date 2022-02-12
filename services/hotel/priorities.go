@@ -1,45 +1,25 @@
 package hotel
 
 import (
-	"ascenda_assessment/apis/suppliers/acme"
-	"ascenda_assessment/apis/suppliers/paperflies"
-	"ascenda_assessment/apis/suppliers/patagonia"
+	"ascenda_assessment/configs"
 )
 
 var (
-	namePriorityConfig = map[string]uint{
-		acme.SupplierName:       1,
-		patagonia.SupplierName:  2,
-		paperflies.SupplierName: 3,
-	}
-
-	addressPriorityConfig = map[string]uint{
-		acme.SupplierName:       1,
-		patagonia.SupplierName:  2,
-		paperflies.SupplierName: 3,
-	}
-
-	descriptionPriorityConfig = map[string]uint{
-		acme.SupplierName:       1,
-		patagonia.SupplierName:  2,
-		paperflies.SupplierName: 3,
-	}
-
-	countryPriorityConfig = map[string]uint{
-		acme.SupplierName:       1,
-		patagonia.SupplierName:  2,
-		paperflies.SupplierName: 3,
-	}
-
-	cityPriorityConfig = map[string]uint{
-		acme.SupplierName:       1,
-		patagonia.SupplierName:  2,
-		paperflies.SupplierName: 3,
-	}
-
-	latLngPriorityConfig = map[string]uint{
-		acme.SupplierName:       1,
-		patagonia.SupplierName:  2,
-		paperflies.SupplierName: 3,
-	}
+	namePriorityConfig        = map[string]uint{}
+	addressPriorityConfig     = map[string]uint{}
+	descriptionPriorityConfig = map[string]uint{}
+	countryPriorityConfig     = map[string]uint{}
+	cityPriorityConfig        = map[string]uint{}
+	latLngPriorityConfig      = map[string]uint{}
 )
+
+func init() {
+	priorityCfg := configs.Cfg.SupplierDataPriorities
+
+	namePriorityConfig = priorityCfg.HotelName
+	addressPriorityConfig = priorityCfg.HotelAddress
+	descriptionPriorityConfig = priorityCfg.HotelDescription
+	countryPriorityConfig = priorityCfg.HotelCountry
+	cityPriorityConfig = priorityCfg.HotelCity
+	latLngPriorityConfig = priorityCfg.HotelLatLng
+}

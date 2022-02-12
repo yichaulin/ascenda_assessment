@@ -10,13 +10,23 @@ import (
 )
 
 type Configs struct {
-	Suppliers Suppliers `yml:"suppliers"`
+	Suppliers              Suppliers              `yaml:"suppliers"`
+	SupplierDataPriorities SupplierDataPriorities `yaml:"supplier_data_priorities"`
 }
 
 type Suppliers struct {
 	ACME       string `yaml:"acme"`
 	Patagonia  string `yaml:"patagonia"`
 	Paperflies string `yaml:"paperflies"`
+}
+
+type SupplierDataPriorities struct {
+	HotelName        map[string]uint `yaml:"hotel_name"`
+	HotelAddress     map[string]uint `yaml:"hotel_address"`
+	HotelDescription map[string]uint `yaml:"hotel_description"`
+	HotelCountry     map[string]uint `yaml:"hotel_country"`
+	HotelCity        map[string]uint `yaml:"hotel_city"`
+	HotelLatLng      map[string]uint `yaml:"hotel_lat_lng"`
 }
 
 var Cfg Configs
