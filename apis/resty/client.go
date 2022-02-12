@@ -1,6 +1,10 @@
 package resty
 
-import "github.com/go-resty/resty/v2"
+import (
+	"net/http"
+
+	"github.com/go-resty/resty/v2"
+)
 
 var client *resty.Client
 
@@ -10,6 +14,10 @@ func init() {
 
 func SetClient(c *resty.Client) {
 	client = c
+}
+
+func GetHTTPClient() *http.Client {
+	return client.GetClient()
 }
 
 func Get(url string) (resp *resty.Response, err error) {

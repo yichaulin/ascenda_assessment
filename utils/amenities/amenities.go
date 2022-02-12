@@ -42,8 +42,10 @@ func (l AmenityList) ToStringSlice() []string {
 	return s
 }
 
-func (l AmenityList) Add(s string) {
-	l[s] = struct{}{}
+func (l AmenityList) Add(amens ...string) {
+	for _, amen := range amens {
+		l[amen] = struct{}{}
+	}
 }
 
 func (l AmenityList) Merge(from AmenityList) {

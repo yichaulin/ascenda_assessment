@@ -35,6 +35,8 @@ type Image struct {
 const (
 	SupplierName = "patagonia"
 
+	Bar = "Bar"
+
 	Aircon        = "Aircon"
 	Tv            = "Tv"
 	CoffeeMachine = "Coffee machine"
@@ -42,7 +44,6 @@ const (
 	HairDryer     = "Hair dryer"
 	Iron          = "Iron"
 	Tub           = "Tub"
-	Bar           = "Bar"
 )
 
 func GetData(destination uint64, hotelIDs map[string]struct{}) (patagoniaData []PatagoniaData, err error) {

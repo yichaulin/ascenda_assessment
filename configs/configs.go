@@ -3,6 +3,8 @@ package configs
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"gopkg.in/yaml.v2"
 
@@ -31,11 +33,10 @@ type SupplierDataPriorities struct {
 
 var Cfg Configs
 
-const (
-	configFileDir = "./configs"
-)
-
 func init() {
+	_, absFilePath, _, _ := runtime.Caller(0)
+	configFileDir := filepath.Dir(absFilePath)
+
 	env := "development"
 	if _env := os.Getenv("ENV"); len(_env) > 0 {
 		env = _env

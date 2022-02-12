@@ -32,10 +32,10 @@ const (
 	DryCleaning    = "DryCleaning"
 	Breakfast      = "Breakfast"
 	Bar            = "Bar"
+	WiFi           = "WiFi"
 
 	Aircon  = "Aircon"
 	BathTub = "BathTub"
-	WiFi    = "WiFi"
 )
 
 func GetData(destination uint64, hotelIDs map[string]struct{}) (acmeData []ACMEData, err error) {
