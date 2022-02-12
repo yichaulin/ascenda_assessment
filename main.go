@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ascenda_assessment/logger"
 	"ascenda_assessment/services/hotel"
 	"fmt"
 
@@ -13,7 +14,7 @@ func main() {
 		hotelIDs := c.QueryArray("hotel_ids[]")
 		destination := c.Query("destination")
 
-		fmt.Println(hotelIDs, destination)
+		logger.Info(fmt.Sprintf("Get hotels request, hotel_ids: %s, destination: %s", hotelIDs, destination))
 
 		hotels, err := hotel.GetHotels(destination, hotelIDs)
 
