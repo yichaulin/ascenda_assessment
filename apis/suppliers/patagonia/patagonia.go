@@ -1,9 +1,12 @@
 package patagonia
 
 import (
+	"encoding/json"
+	"strings"
+
 	"ascenda_assessment/apis/resty"
 	"ascenda_assessment/configs"
-	"encoding/json"
+	amen "ascenda_assessment/utils/amenities"
 )
 
 type PatagoniaData struct {
@@ -49,4 +52,36 @@ func GetData() (patagoniaData []PatagoniaData, err error) {
 	json.Unmarshal(resp.Body(), &patagoniaData)
 
 	return patagoniaData, nil
+}
+
+func ParseAmenitiesToAmenityList(amenities []string) (general amen.AmenityList, room amen.AmenityList, others amen.AmenityList) {
+	general = amen.AmenityList{}
+	room = amen.AmenityList{}
+	others = amen.AmenityList{}
+
+	for _, a := range amenities {
+		a = strings.TrimSpace(a)
+		switch a {
+		case Aircon:
+			room.Add(amen.Aircon)
+		case Tv:
+			room.Add(amen.Tv)
+		case CoffeeMachine:
+			room.Add(amen.CoffeeMachine)
+		case HairDryer:
+			room.Add(amen.HairDryer)
+		case Iron:
+			room.Add(amen.Iron)
+		case Tub:
+			room.Add(amen.Bathtub)
+		case Bar:
+			general.Add(amen.Bar)
+		case Kettle:
+			room.Add(amen.Kettle)
+		default:
+			others.Add(a)
+		}
+	}
+
+	return general, room, others
 }

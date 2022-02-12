@@ -5,6 +5,7 @@ import (
 	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
 	"ascenda_assessment/logger"
+	amen "ascenda_assessment/utils/amenities"
 	"strings"
 )
 
@@ -30,12 +31,12 @@ type Location struct {
 }
 
 type Amenities struct {
-	GeneralList amenityList `json:"-"`
-	RoomList    amenityList `json:"-"`
-	OthersList  amenityList `json:"-"`
-	General     []string    `json:"general"`
-	Room        []string    `json:"room"`
-	Others      []string    `json:"others"`
+	GeneralList amen.AmenityList `json:"-"`
+	RoomList    amen.AmenityList `json:"-"`
+	OthersList  amen.AmenityList `json:"-"`
+	General     []string         `json:"general"`
+	Room        []string         `json:"room"`
+	Others      []string         `json:"others"`
 }
 
 type Images struct {
@@ -71,16 +72,16 @@ func GetHotels(destination string, hotelIDs []string) (hotels []*Hotel, err erro
 	hm.mergePatagoniaData(patagoniaData)
 	hm.mergePaperfliesData(paperflies)
 
-	return hm.ToHotelSlice(), nil
+	return hm.toHotelSlice(), nil
 }
 
 func newHotel() *Hotel {
 	hotel := Hotel{
 		Location: &Location{},
 		Amenities: &Amenities{
-			GeneralList: amenityList{},
-			RoomList:    amenityList{},
-			OthersList:  amenityList{},
+			GeneralList: amen.AmenityList{},
+			RoomList:    amen.AmenityList{},
+			OthersList:  amen.AmenityList{},
 		},
 		BoodingConditions: []string{},
 		Images: Images{
@@ -93,7 +94,7 @@ func newHotel() *Hotel {
 	return &hotel
 }
 
-func (hm hotelMap) ToHotelSlice() []*Hotel {
+func (hm hotelMap) toHotelSlice() []*Hotel {
 	hotels := make([]*Hotel, 0, len(hm))
 	for _, h := range hm {
 		h.Amenities.ListToStringSlice()
@@ -129,11 +130,10 @@ func (hm hotelMap) mergeACMEData(acmeData []acme.ACMEData) {
 			hotel.Location.City = &city
 		}
 
-		amenities := parseACMEFacilities(d.Facilities)
-		hotel.Amenities.GeneralList.Merge(amenities.GeneralList)
-		hotel.Amenities.RoomList.Merge(amenities.RoomList)
-		hotel.Amenities.OthersList.Merge(amenities.OthersList)
-
+		general, room, others := acme.ParseFacilitiesToAmenityList(d.Facilities)
+		hotel.Amenities.GeneralList.Merge(general)
+		hotel.Amenities.RoomList.Merge(room)
+		hotel.Amenities.OthersList.Merge(others)
 	}
 }
 
@@ -159,10 +159,10 @@ func (hm hotelMap) mergePatagoniaData(patagoniaData []patagonia.PatagoniaData) {
 			hotel.Location.Address = &addr
 		}
 
-		amenities := parsePatagoniaAmenities(d.Amenities)
-		hotel.Amenities.GeneralList.Merge(amenities.GeneralList)
-		hotel.Amenities.RoomList.Merge(amenities.RoomList)
-		hotel.Amenities.OthersList.Merge(amenities.OthersList)
+		general, room, others := patagonia.ParseAmenitiesToAmenityList(d.Amenities)
+		hotel.Amenities.GeneralList.Merge(general)
+		hotel.Amenities.RoomList.Merge(room)
+		hotel.Amenities.OthersList.Merge(others)
 
 		tmpImgs := make([]ImageLink, len(d.Images.Rooms))
 		for i, roomImg := range d.Images.Rooms {
@@ -200,10 +200,10 @@ func (hm hotelMap) mergePaperfliesData(paperfliesData []paperflies.PaperfliesDat
 		hotel.Description = d.Details
 		hotel.BoodingConditions = d.BookingConditions
 
-		amenities := parsePaperfliesAmenities(d.Amenities)
-		hotel.Amenities.GeneralList.Merge(amenities.GeneralList)
-		hotel.Amenities.RoomList.Merge(amenities.RoomList)
-		hotel.Amenities.OthersList.Merge(amenities.OthersList)
+		general, room, others := paperflies.ParseAmenitiesToAmenityList(d.Amenities)
+		hotel.Amenities.GeneralList.Merge(general)
+		hotel.Amenities.RoomList.Merge(room)
+		hotel.Amenities.OthersList.Merge(others)
 
 		tmpImgs := make([]ImageLink, len(d.Images.Rooms))
 		for i, roomImg := range d.Images.Rooms {

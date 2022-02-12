@@ -1,9 +1,12 @@
 package paperflies
 
 import (
+	"encoding/json"
+	"strings"
+
 	"ascenda_assessment/apis/resty"
 	"ascenda_assessment/configs"
-	"encoding/json"
+	amen "ascenda_assessment/utils/amenities"
 )
 
 type PaperfliesData struct {
@@ -69,4 +72,64 @@ func GetData() (paperfliesData []PaperfliesData, err error) {
 	json.Unmarshal(resp.Body(), &paperfliesData)
 
 	return paperfliesData, nil
+}
+
+func ParseAmenitiesToAmenityList(amenities Amenities) (general amen.AmenityList, room amen.AmenityList, others amen.AmenityList) {
+	general = amen.AmenityList{}
+	room = amen.AmenityList{}
+	others = amen.AmenityList{}
+
+	for _, a := range amenities.General {
+		a = strings.TrimSpace(a)
+		switch a {
+		case GeneralOutdoorPool:
+			general.Add(amen.OutdoorPool)
+		case GeneralIndoorPool:
+			general.Add(amen.IndoorPool)
+		case GeneralBusinessCenter:
+			general.Add(amen.BusinessCenter)
+		case GeneralChildcare:
+			general.Add(amen.Childcare)
+		case GeneralParking:
+			general.Add(amen.Parking)
+		case GeneralBar:
+			general.Add(amen.Bar)
+		case GeneralDryCleaning:
+			general.Add(amen.DryCleaning)
+		case GeneralWifi:
+			general.Add(amen.Wifi)
+		case GeneralBreakfast:
+			general.Add(amen.Breakfast)
+		case GeneralConcierge:
+			general.Add(amen.Concierge)
+		default:
+			others.Add(a)
+		}
+	}
+
+	for _, a := range amenities.Room {
+		a = strings.TrimSpace(a)
+		switch a {
+		case RoomTv:
+			room.Add(amen.Tv)
+		case RoomCoffeeMachine:
+			room.Add(amen.CoffeeMachine)
+		case RoomKettle:
+			room.Add(amen.Kettle)
+		case RoomHairDryer:
+			room.Add(amen.HairDryer)
+		case RoomIron:
+			room.Add(amen.Iron)
+		case RoomMinibar:
+			room.Add(amen.Minibar)
+		case RoomAircon:
+			room.Add(amen.Aircon)
+		case RoomBathtub:
+			room.Add(amen.Bathtub)
+		default:
+			others.Add(a)
+		}
+	}
+
+	return general, room, others
 }

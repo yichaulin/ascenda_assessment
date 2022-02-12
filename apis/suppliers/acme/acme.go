@@ -1,9 +1,12 @@
 package acme
 
 import (
+	"encoding/json"
+	"strings"
+
 	"ascenda_assessment/apis/resty"
 	"ascenda_assessment/configs"
-	"encoding/json"
+	amen "ascenda_assessment/utils/amenities"
 )
 
 type ACMEData struct {
@@ -41,4 +44,36 @@ func GetData() (acmeData []ACMEData, err error) {
 	json.Unmarshal(resp.Body(), &acmeData)
 
 	return acmeData, nil
+}
+
+func ParseFacilitiesToAmenityList(facilities []string) (general amen.AmenityList, room amen.AmenityList, others amen.AmenityList) {
+	general = amen.AmenityList{}
+	room = amen.AmenityList{}
+	others = amen.AmenityList{}
+
+	for _, f := range facilities {
+		f := strings.TrimSpace(f)
+		switch f {
+		case Pool:
+			general.Add(amen.Pool)
+		case Breakfast:
+			general.Add(amen.Breakfast)
+		case BusinessCenter:
+			general.Add(amen.BusinessCenter)
+		case WiFi:
+			general.Add(amen.Wifi)
+		case DryCleaning:
+			general.Add(amen.DryCleaning)
+		case Aircon:
+			room.Add(amen.Aircon)
+		case BathTub:
+			room.Add(amen.Bathtub)
+		case Bar:
+			general.Add(amen.Bar)
+		default:
+			others.Add(f)
+		}
+	}
+
+	return general, room, others
 }
