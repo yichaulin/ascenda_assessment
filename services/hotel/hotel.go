@@ -2,6 +2,7 @@ package hotel
 
 import (
 	"ascenda_assessment/apis/suppliers/acme"
+	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
 	"ascenda_assessment/logger"
 	"strings"
@@ -25,7 +26,7 @@ type Location struct {
 	Lng     *float32 `json:"lng"`
 	Address *string  `json:"address"`
 	City    *string  `json:"city"`
-	Contry  *string  `json:"country"`
+	Country *string  `json:"country"`
 }
 
 type Amenities struct {
@@ -61,8 +62,14 @@ func GetHotels(destination string, hotelIDs []string) (hotels []*Hotel, err erro
 		logger.Error("Get Patagonia data failed", err)
 	}
 
+	paperflies, err := paperflies.GetData()
+	if err != nil {
+		logger.Error("Get Paperflies data failed", err)
+	}
+
 	hm.mergeACMEData(acmeData)
 	hm.mergePatagoniaData(patagoniaData)
+	hm.mergePaperfliesData(paperflies)
 
 	return hm.ToHotelSlice(), nil
 }
@@ -171,6 +178,47 @@ func (hm hotelMap) mergePatagoniaData(patagoniaData []patagonia.PatagoniaData) {
 			tmpImgs[i] = ImageLink{
 				Link:        amenImg.Url,
 				Description: amenImg.Description,
+			}
+		}
+		hotel.Images.Amenities = append(hotel.Images.Amenities, tmpImgs...)
+	}
+}
+
+func (hm hotelMap) mergePaperfliesData(paperfliesData []paperflies.PaperfliesData) {
+	for _, d := range paperfliesData {
+		hotel, ok := hm[d.HotelID]
+		if !ok {
+			hotel = newHotel()
+			hm[d.HotelID] = hotel
+		}
+
+		hotel.ID = d.HotelID
+		hotel.Destination = d.DestinationID
+		hotel.Name = d.HotelName
+		hotel.Location.Address = d.Location.Address
+		hotel.Location.Country = d.Location.Country
+		hotel.Description = d.Details
+		hotel.BoodingConditions = d.BookingConditions
+
+		amenities := parsePaperfliesAmenities(d.Amenities)
+		hotel.Amenities.GeneralList.Merge(amenities.GeneralList)
+		hotel.Amenities.RoomList.Merge(amenities.RoomList)
+		hotel.Amenities.OthersList.Merge(amenities.OthersList)
+
+		tmpImgs := make([]ImageLink, len(d.Images.Rooms))
+		for i, roomImg := range d.Images.Rooms {
+			tmpImgs[i] = ImageLink{
+				Link:        roomImg.Link,
+				Description: roomImg.Caption,
+			}
+		}
+		hotel.Images.Rooms = append(hotel.Images.Rooms, tmpImgs...)
+
+		tmpImgs = make([]ImageLink, len(d.Images.Site))
+		for i, amenImg := range d.Images.Site {
+			tmpImgs[i] = ImageLink{
+				Link:        amenImg.Link,
+				Description: amenImg.Caption,
 			}
 		}
 		hotel.Images.Amenities = append(hotel.Images.Amenities, tmpImgs...)
