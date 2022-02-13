@@ -8,6 +8,7 @@ import (
 	"ascenda_assessment/apis/suppliers/acme"
 	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
+	"ascenda_assessment/configs"
 	"ascenda_assessment/logger"
 
 	amen "ascenda_assessment/utils/amenities"
@@ -119,7 +120,7 @@ func newHotel() *Hotel {
 }
 
 func (h *Hotel) setNameWithPriority(name string, supplier string) {
-	priority := namePriorityConfig[supplier]
+	priority := configs.Cfg.SupplierDataPriorities.HotelName[supplier]
 	if priority > h.namePriority {
 		h.Name = name
 		h.namePriority = priority
@@ -131,7 +132,7 @@ func (h *Hotel) setDescriptionWithPriority(description *string, supplier string)
 		return
 	}
 
-	priority := descriptionPriorityConfig[supplier]
+	priority := configs.Cfg.SupplierDataPriorities.HotelDescription[supplier]
 	if priority > h.descriptionPriority {
 		desc := strings.TrimSpace(*description)
 		h.Description = &desc
@@ -144,7 +145,7 @@ func (l *Location) setCityWithPriority(city *string, supplier string) {
 		return
 	}
 
-	priority := cityPriorityConfig[supplier]
+	priority := configs.Cfg.SupplierDataPriorities.HotelCity[supplier]
 	if priority > l.cityPriority {
 		c := strings.TrimSpace(*city)
 		l.City = &c
@@ -157,7 +158,7 @@ func (l *Location) setAddressWithPriority(address *string, supplier string) {
 		return
 	}
 
-	priority := addressPriorityConfig[supplier]
+	priority := configs.Cfg.SupplierDataPriorities.HotelAddress[supplier]
 	if priority > l.addressPriority {
 		addr := strings.TrimSpace(*address)
 		l.Address = &addr
@@ -170,7 +171,7 @@ func (l *Location) setLatLngWithPriority(lat *float32, lng *float32, supplier st
 		return
 	}
 
-	priority := latLngPriorityConfig[supplier]
+	priority := configs.Cfg.SupplierDataPriorities.HotelLatLng[supplier]
 	if priority > l.latLngPriority {
 		l.Lat = lat
 		l.Lng = lng
@@ -183,8 +184,8 @@ func (l *Location) setCountryWithPriority(country *string, supplier string) {
 		return
 	}
 
-	priority := countryPriorityConfig[supplier]
-	if priority > l.latLngPriority {
+	priority := configs.Cfg.SupplierDataPriorities.HotelCountry[supplier]
+	if priority > l.countryPriority {
 		c := strings.TrimSpace(*country)
 		l.Country = &c
 		l.countryPriority = priority

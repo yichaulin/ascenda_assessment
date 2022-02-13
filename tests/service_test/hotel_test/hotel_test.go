@@ -1,6 +1,9 @@
 package hotel_test
 
 import (
+	"ascenda_assessment/apis/suppliers/acme"
+	"ascenda_assessment/apis/suppliers/paperflies"
+	"ascenda_assessment/apis/suppliers/patagonia"
 	"ascenda_assessment/configs"
 	"ascenda_assessment/services/hotel"
 	"ascenda_assessment/tests/mock"
@@ -15,19 +18,7 @@ import (
 
 func TestGetHotels(t *testing.T) {
 	ass := assert.New(t)
-
-	suppliers := configs.Cfg.Suppliers
-	mockDataPaths := [][2]string{
-		{suppliers.ACME, "./mockAcmeData.json"},
-		{suppliers.Paperflies, "./mockPaperfliesData.json"},
-		{suppliers.Patagonia, "./mockPatagoniaData.json"},
-	}
-	for _, p := range mockDataPaths {
-		url, path := p[0], p[1]
-		mockBody, err := os.ReadFile(path)
-		ass.Nil(err, fmt.Sprintf("Read supplier mock data file failed. Path: %s", path))
-		mock.MockAPI("GET", url, string(mockBody), http.StatusOK)
-	}
+	mockSupplierData(ass)
 	defer httpmock.DeactivateAndReset()
 
 	tests := []struct {
@@ -60,5 +51,56 @@ func TestGetHotels(t *testing.T) {
 		hotels, err := hotel.GetHotels(tc.destination, tc.hotelIDs)
 		ass.Equal(tc.expectError, err)
 		ass.Equal(tc.expectHotelCounts, len(hotels))
+	}
+}
+
+func TestGetHotelsWithAddressPriorityConfig(t *testing.T) {
+	ass := assert.New(t)
+	mockSupplierData(ass)
+	defer httpmock.DeactivateAndReset()
+
+	tests := []struct {
+		priority        []uint // [{acme}, {patagonia}, {paperflies}, ...]
+		expectedAddress string
+	}{
+		{
+			priority:        []uint{1, 2, 3},
+			expectedAddress: "8 Sentosa Gateway, Beach Villas, 098269",
+		},
+		{
+			priority:        []uint{4, 2, 3},
+			expectedAddress: "8 Sentosa Gateway, Beach Villas",
+		},
+	}
+
+	for _, tc := range tests {
+		supplierDataPriorities := configs.Cfg.SupplierDataPriorities
+		addressPriority := map[string]uint{
+			acme.SupplierName:       tc.priority[0],
+			patagonia.SupplierName:  tc.priority[1],
+			paperflies.SupplierName: tc.priority[2],
+		}
+		supplierDataPriorities.HotelAddress = addressPriority
+
+		hotels, err := hotel.GetHotels("5432", []string{"iJhz"})
+		ass.Nil(err)
+		ass.Equal(1, len(hotels))
+		ass.Equal(*hotels[0].Location.Address, tc.expectedAddress)
+	}
+
+}
+
+func mockSupplierData(ass *assert.Assertions) {
+	suppliers := configs.Cfg.Suppliers
+	mockDataPaths := [][2]string{
+		{suppliers.ACME, "./mockAcmeData.json"},
+		{suppliers.Paperflies, "./mockPaperfliesData.json"},
+		{suppliers.Patagonia, "./mockPatagoniaData.json"},
+	}
+	for _, p := range mockDataPaths {
+		url, path := p[0], p[1]
+		mockBody, err := os.ReadFile(path)
+		ass.Nil(err, fmt.Sprintf("Read supplier mock data file failed. Path: %s", path))
+		mock.MockAPI("GET", url, string(mockBody), http.StatusOK)
 	}
 }

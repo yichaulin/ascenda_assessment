@@ -12,8 +12,8 @@ import (
 )
 
 type Configs struct {
-	Suppliers              Suppliers              `yaml:"suppliers"`
-	SupplierDataPriorities SupplierDataPriorities `yaml:"supplier_data_priorities"`
+	Suppliers              *Suppliers              `yaml:"suppliers"`
+	SupplierDataPriorities *SupplierDataPriorities `yaml:"supplier_data_priorities"`
 }
 
 type Suppliers struct {
