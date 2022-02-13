@@ -3,10 +3,10 @@ package mock
 import (
 	"github.com/jarcoal/httpmock"
 
-	"ascenda_assessment/apis/resty"
+	"ascenda_assessment/apis/client"
 )
 
-func MockAPI(method string, url string, resBody string, resStatus int) {
+func MockAPI(client client.Client, method string, url string, resBody string, resStatus int) {
 	httpmock.RegisterResponder(method, url, httpmock.NewStringResponder(resStatus, resBody))
-	httpmock.ActivateNonDefault(resty.GetHTTPClient())
+	httpmock.ActivateNonDefault(client.GetHTTPClient())
 }

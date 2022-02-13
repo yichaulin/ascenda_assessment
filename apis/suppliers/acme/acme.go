@@ -3,8 +3,9 @@ package acme
 import (
 	"encoding/json"
 	"strings"
+	"time"
 
-	"ascenda_assessment/apis/resty"
+	"ascenda_assessment/apis/client"
 	"ascenda_assessment/configs"
 
 	amen "ascenda_assessment/utils/amenities"
@@ -38,9 +39,16 @@ const (
 	BathTub = "BathTub"
 )
 
+var ApiClient client.Client
+
+func init() {
+	ApiClient = client.New()
+	ApiClient.SetTimeout(5 * time.Second)
+}
+
 func GetData(destination uint64, hotelIDs map[string]struct{}) (acmeData []ACMEData, err error) {
 	url := configs.Cfg.Suppliers.ACME
-	resp, err := resty.Get(url)
+	resp, err := ApiClient.Get(url)
 	if err != nil {
 		return acmeData, err
 	}

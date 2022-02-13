@@ -1,6 +1,7 @@
 package hotel_test
 
 import (
+	"ascenda_assessment/apis/client"
 	"ascenda_assessment/apis/suppliers/acme"
 	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
@@ -92,15 +93,32 @@ func TestGetHotelsWithAddressPriorityConfig(t *testing.T) {
 
 func mockSupplierData(ass *assert.Assertions) {
 	suppliers := configs.Cfg.Suppliers
-	mockDataPaths := [][2]string{
-		{suppliers.ACME, "./mockAcmeData.json"},
-		{suppliers.Paperflies, "./mockPaperfliesData.json"},
-		{suppliers.Patagonia, "./mockPatagoniaData.json"},
+	mockConfig := []struct {
+		url          string
+		mockDataPath string
+		apiClient    client.Client
+	}{
+		{
+			url:          suppliers.ACME,
+			mockDataPath: "./mockAcmeData.json",
+			apiClient:    acme.ApiClient,
+		},
+		{
+			url:          suppliers.Paperflies,
+			mockDataPath: "./mockPaperfliesData.json",
+			apiClient:    paperflies.ApiClient,
+		},
+		{
+			url:          suppliers.Patagonia,
+			mockDataPath: "./mockPatagoniaData.json",
+			apiClient:    patagonia.ApiClient,
+		},
 	}
-	for _, p := range mockDataPaths {
-		url, path := p[0], p[1]
+
+	for _, c := range mockConfig {
+		url, path, client := c.url, c.mockDataPath, c.apiClient
 		mockBody, err := os.ReadFile(path)
 		ass.Nil(err, fmt.Sprintf("Read supplier mock data file failed. Path: %s", path))
-		mock.MockAPI("GET", url, string(mockBody), http.StatusOK)
+		mock.MockAPI(client, "GET", url, string(mockBody), http.StatusOK)
 	}
 }

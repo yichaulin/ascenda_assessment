@@ -24,7 +24,7 @@ func TestGetData(t *testing.T) {
 	mockBody, err := os.ReadFile(mockDataPath)
 	ass.Nil(err, fmt.Sprintf("Read Patagonia mock data file failed. Path: %s", mockDataPath))
 
-	mock.MockAPI("GET", url, string(mockBody), http.StatusOK)
+	mock.MockAPI(patagonia.ApiClient, "GET", url, string(mockBody), http.StatusOK)
 	defer httpmock.DeactivateAndReset()
 
 	tests := []struct {
