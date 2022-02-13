@@ -1,7 +1,13 @@
 suppliers:
-  acme: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/acme
-  patagonia: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/patagonia
-  paperflies: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/paperflies
+  acme:
+    url: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/acme
+    enabled: true
+  patagonia:
+    url: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/patagonia
+    enabled: true
+  paperflies:
+    url: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/paperflies
+    enabled: true
 
 supplier_data_priorities:
   # 0 value is default value if supplier is not setup. DO NOT setup as 0 value

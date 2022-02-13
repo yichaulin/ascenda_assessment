@@ -73,9 +73,15 @@ func init() {
 	ApiClient.SetTimeout(5 * time.Second)
 }
 
-func GetData(destination uint64, hotelIDs map[string]struct{}) (paperfliesData []PaperfliesData, err error) {
-	url := configs.Cfg.Suppliers.Paperflies
-	resp, err := ApiClient.Get(url)
+func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
+	supplierConfig, ok := configs.Cfg.Suppliers[SupplierName]
+	paperfliesData := []PaperfliesData{}
+
+	if !ok || !supplierConfig.Enabled {
+		return paperfliesData, nil
+	}
+
+	resp, err := ApiClient.Get(supplierConfig.Url)
 	if err != nil {
 		return paperfliesData, err
 	}

@@ -99,17 +99,17 @@ func mockSupplierData(ass *assert.Assertions) {
 		apiClient    client.Client
 	}{
 		{
-			url:          suppliers.ACME,
+			url:          suppliers[acme.SupplierName].Url,
 			mockDataPath: "./mockAcmeData.json",
 			apiClient:    acme.ApiClient,
 		},
 		{
-			url:          suppliers.Paperflies,
+			url:          suppliers[paperflies.SupplierName].Url,
 			mockDataPath: "./mockPaperfliesData.json",
 			apiClient:    paperflies.ApiClient,
 		},
 		{
-			url:          suppliers.Patagonia,
+			url:          suppliers[patagonia.SupplierName].Url,
 			mockDataPath: "./mockPatagoniaData.json",
 			apiClient:    patagonia.ApiClient,
 		},

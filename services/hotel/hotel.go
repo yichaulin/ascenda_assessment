@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 
-	"ascenda_assessment/apis/suppliers/acme"
-	"ascenda_assessment/apis/suppliers/paperflies"
-	"ascenda_assessment/apis/suppliers/patagonia"
+	supplier "ascenda_assessment/apis/suppliers"
 	"ascenda_assessment/configs"
 	"ascenda_assessment/logger"
 
@@ -78,24 +77,21 @@ func GetHotels(destination string, hotelIDs []string) (hotels []*Hotel, err erro
 		hotelIDList[id] = struct{}{}
 	}
 
-	acmeData, err := acme.GetData(destinationInt64, hotelIDList)
-	if err != nil {
-		logger.Error("Get ACME data failed.", err)
+	wg := new(sync.WaitGroup)
+	suppliers := supplier.GetAllSupplierNames()
+	wg.Add(len(suppliers))
+	for _, s := range suppliers {
+		go func(wg *sync.WaitGroup, spl string) {
+			defer wg.Done()
+			data, e := supplier.GetData(spl, destinationInt64, hotelIDList)
+			if e != nil {
+				logger.Error(fmt.Sprintf("Get %s data failed.", spl), e)
+				return
+			}
+			hm.mergeSupplierData(data)
+		}(wg, s)
 	}
-
-	patagoniaData, err := patagonia.GetData(destinationInt64, hotelIDList)
-	if err != nil {
-		logger.Error("Get Patagonia data failed.", err)
-	}
-
-	paperflies, err := paperflies.GetData(destinationInt64, hotelIDList)
-	if err != nil {
-		logger.Error("Get Paperflies data failed.", err)
-	}
-
-	hm.mergeACMEData(acmeData)
-	hm.mergePatagoniaData(patagoniaData)
-	hm.mergePaperfliesData(paperflies)
+	wg.Wait()
 
 	return hm.toHotelSlice(), nil
 }

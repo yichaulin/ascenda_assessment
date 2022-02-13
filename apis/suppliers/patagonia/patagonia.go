@@ -54,9 +54,14 @@ func init() {
 	ApiClient.SetTimeout(5 * time.Second)
 }
 
-func GetData(destination uint64, hotelIDs map[string]struct{}) (patagoniaData []PatagoniaData, err error) {
-	url := configs.Cfg.Suppliers.Patagonia
-	resp, err := ApiClient.Get(url)
+func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
+	patagoniaData := []PatagoniaData{}
+	supplierConfig, ok := configs.Cfg.Suppliers[SupplierName]
+	if !ok || !supplierConfig.Enabled {
+		return patagoniaData, nil
+	}
+
+	resp, err := ApiClient.Get(supplierConfig.Url)
 	if err != nil {
 		return patagoniaData, err
 	}

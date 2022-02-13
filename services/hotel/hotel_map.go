@@ -23,6 +23,19 @@ func (hm hotelMap) toHotelSlice() []*Hotel {
 	return hotels
 }
 
+func (hm hotelMap) mergeSupplierData(data interface{}) {
+	switch data.(type) {
+	case []acme.ACMEData:
+		hm.mergeACMEData(data.([]acme.ACMEData))
+	case []patagonia.PatagoniaData:
+		hm.mergePatagoniaData(data.([]patagonia.PatagoniaData))
+	case []paperflies.PaperfliesData:
+		hm.mergePaperfliesData(data.([]paperflies.PaperfliesData))
+	default:
+		return
+	}
+}
+
 func (hm hotelMap) mergeACMEData(acmeData []acme.ACMEData) {
 	supplier := acme.SupplierName
 

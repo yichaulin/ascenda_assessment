@@ -46,8 +46,14 @@ func init() {
 	ApiClient.SetTimeout(5 * time.Second)
 }
 
-func GetData(destination uint64, hotelIDs map[string]struct{}) (acmeData []ACMEData, err error) {
-	url := configs.Cfg.Suppliers.ACME
+func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
+	acmeData := []ACMEData{}
+	supplierConfig, ok := configs.Cfg.Suppliers[SupplierName]
+	if !ok || !supplierConfig.Enabled {
+		return acmeData, nil
+	}
+
+	url := configs.Cfg.Suppliers[SupplierName].Url
 	resp, err := ApiClient.Get(url)
 	if err != nil {
 		return acmeData, err

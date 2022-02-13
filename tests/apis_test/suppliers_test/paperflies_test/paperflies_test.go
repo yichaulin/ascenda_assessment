@@ -19,7 +19,7 @@ import (
 func TestGetData(t *testing.T) {
 	ass := assert.New(t)
 
-	url := configs.Cfg.Suppliers.Paperflies
+	url := configs.Cfg.Suppliers[paperflies.SupplierName].Url
 	mockDataPath := "./mockData.json"
 	mockBody, err := os.ReadFile(mockDataPath)
 	ass.Nil(err, fmt.Sprintf("Read Paperflies mock data file failed. Path: %s", mockDataPath))
@@ -51,7 +51,7 @@ func TestGetData(t *testing.T) {
 		}
 		data, err := paperflies.GetData(tc.destination, hIDs)
 		ass.Nil(err)
-		ass.Equal(tc.expectHotelCounts, len(data))
+		ass.Equal(tc.expectHotelCounts, len(data.([]paperflies.PaperfliesData)))
 	}
 }
 func TestParseAmenitiesToAmenityList(t *testing.T) {

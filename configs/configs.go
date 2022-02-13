@@ -12,14 +12,14 @@ import (
 )
 
 type Configs struct {
-	Suppliers              *Suppliers              `yaml:"suppliers"`
+	Suppliers              map[string]Supplier
 	SupplierDataPriorities *SupplierDataPriorities `yaml:"supplier_data_priorities"`
 }
 
-type Suppliers struct {
-	ACME       string `yaml:"acme"`
-	Patagonia  string `yaml:"patagonia"`
-	Paperflies string `yaml:"paperflies"`
+type Supplier struct {
+	Name    string `yaml:"name"`
+	Url     string `yaml:"url"`
+	Enabled bool   `yaml:"enabled"`
 }
 
 type SupplierDataPriorities struct {
@@ -44,9 +44,16 @@ func init() {
 
 	filePath := fmt.Sprintf("%s/%s.yaml", configFileDir, env)
 	fileByte, err := os.ReadFile(filePath)
-
 	if err != nil {
 		logErrorAndExit(err)
+	}
+
+	suppliers := struct {
+		suppliers []Supplier `yaml:"suppliers"`
+	}{}
+	err = yaml.Unmarshal(fileByte, &suppliers)
+	for _, s := range suppliers.suppliers {
+		Cfg.Suppliers[s.Name] = s
 	}
 
 	err = yaml.Unmarshal(fileByte, &Cfg)
