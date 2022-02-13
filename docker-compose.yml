@@ -1,0 +1,7 @@
+version: "3.3"
+services:
+  ascenda_assessment:
+    image: yichaulin/ascenda_assessment:latest
+    restart: on-failure
+    ports:
+        - 80:8080
