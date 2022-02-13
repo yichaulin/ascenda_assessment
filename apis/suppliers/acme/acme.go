@@ -43,7 +43,9 @@ var ApiClient client.Client
 
 func init() {
 	ApiClient = client.New()
-	ApiClient.SetTimeout(5 * time.Second)
+	if cfg, ok := configs.Cfg.Suppliers[SupplierName]; ok && cfg.Timeout > 0 {
+		ApiClient.SetTimeout(cfg.Timeout * time.Second)
+	}
 }
 
 func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {

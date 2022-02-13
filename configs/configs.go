@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"gopkg.in/yaml.v2"
 
@@ -17,9 +18,10 @@ type Configs struct {
 }
 
 type Supplier struct {
-	Name    string `yaml:"name"`
-	Url     string `yaml:"url"`
-	Enabled bool   `yaml:"enabled"`
+	Name    string        `yaml:"name"`
+	Url     string        `yaml:"url"`
+	Enabled bool          `yaml:"enabled"`
+	Timeout time.Duration `yaml:"timeout"`
 }
 
 type SupplierDataPriorities struct {
