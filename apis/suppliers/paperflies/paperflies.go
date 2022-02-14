@@ -9,6 +9,7 @@ import (
 	"ascenda_assessment/configs"
 
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/supplier_data_filter"
 )
 
 type PaperfliesData struct {
@@ -75,6 +76,14 @@ func init() {
 	}
 }
 
+func (p PaperfliesData) GetHotelID() string {
+	return p.HotelID
+}
+
+func (p PaperfliesData) GetDestinationID() uint64 {
+	return p.DestinationID
+}
+
 func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
 	supplierConfig, ok := configs.Cfg.Suppliers[SupplierName]
 	paperfliesData := []PaperfliesData{}
@@ -93,10 +102,7 @@ func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, err
 
 	paperfliesData = make([]PaperfliesData, 0, len(tmp))
 	for _, hotel := range tmp {
-		_, matchHotelID := hotelIDs[hotel.HotelID]
-		if (matchHotelID && hotel.DestinationID == destination) ||
-			(len(hotelIDs) == 0 && hotel.DestinationID == destination) ||
-			(matchHotelID && destination == 0) {
+		if supplier_data_filter.IsMatchDestinationAndHotelID(hotel, destination, hotelIDs) {
 			paperfliesData = append(paperfliesData, hotel)
 		}
 	}

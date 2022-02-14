@@ -9,6 +9,7 @@ import (
 	"ascenda_assessment/configs"
 
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/supplier_data_filter"
 )
 
 type PatagoniaData struct {
@@ -56,6 +57,14 @@ func init() {
 	}
 }
 
+func (p PatagoniaData) GetHotelID() string {
+	return p.ID
+}
+
+func (p PatagoniaData) GetDestinationID() uint64 {
+	return p.DestinationID
+}
+
 func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
 	patagoniaData := []PatagoniaData{}
 	supplierConfig, ok := configs.Cfg.Suppliers[SupplierName]
@@ -73,10 +82,7 @@ func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, err
 
 	patagoniaData = make([]PatagoniaData, 0, len(tmp))
 	for _, hotel := range tmp {
-		_, matchHotelID := hotelIDs[hotel.ID]
-		if (matchHotelID && hotel.DestinationID == destination) ||
-			(len(hotelIDs) == 0 && hotel.DestinationID == destination) ||
-			(matchHotelID && destination == 0) {
+		if supplier_data_filter.IsMatchDestinationAndHotelID(hotel, destination, hotelIDs) {
 			patagoniaData = append(patagoniaData, hotel)
 		}
 	}

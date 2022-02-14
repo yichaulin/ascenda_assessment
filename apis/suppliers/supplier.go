@@ -1,22 +1,24 @@
 package supplier
 
 import (
+	"fmt"
+
 	"ascenda_assessment/apis/suppliers/acme"
 	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
 )
 
-func GetData(supplier string, destination uint64, hotelIDs map[string]struct{}) (data interface{}, err error) {
+func GetData(supplier string, destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
 	switch supplier {
 	case acme.SupplierName:
-		data, err = acme.GetData(destination, hotelIDs)
+		return acme.GetData(destination, hotelIDs)
 	case patagonia.SupplierName:
-		data, err = patagonia.GetData(destination, hotelIDs)
+		return patagonia.GetData(destination, hotelIDs)
 	case paperflies.SupplierName:
-		data, err = paperflies.GetData(destination, hotelIDs)
+		return paperflies.GetData(destination, hotelIDs)
+	default:
+		return nil, fmt.Errorf("Invalid supplier: %s", supplier)
 	}
-
-	return data, err
 }
 
 func GetAllSupplierNames() []string {
