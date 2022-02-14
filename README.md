@@ -9,7 +9,7 @@ Get hotels information
     GET https://ascenda-assessment.maxisme.com/api/v1/hotels?destination={destination_id}&hotel_ids[]={hotel_id_1}&hotel_ids[]={hotel_id_2}
     ```
 - Description:
-    - If request with both `desination_id` and `hotel_ids[]`, it would return hotels that matches destination id and and hotel id.
+    - If request with both `desination_id` and `hotel_ids[]`, it would return hotels that match both destination id and and hotel id.
     - If request with only `desination_id`, it would return all hotels that match destination id.
     - If request with only `hotel_ids[]`, it would return all hotels that match hotel ids.
     - If request without `desination_id` and `hotel_ids[]`, it would return `400` http status code, and invalid imput msg.
