@@ -1,6 +1,6 @@
 package amenities
 
-type AmenityList map[string]struct{}
+import "ascenda_assessment/utils/string_list"
 
 const (
 	Pool           = "pool"
@@ -25,31 +25,10 @@ const (
 	Minibar       = "minibar"
 )
 
-func CleanGeneralListDuplicatedItem(list AmenityList) {
+func CleanGeneralListDuplicatedItem(list string_list.StringList) {
 	_, hasOutdoorPool := list[OutdoorPool]
 	_, hasIndoorPool := list[IndoorPool]
 	if hasIndoorPool || hasOutdoorPool {
-		delete(list, Pool)
-	}
-}
-
-func (l AmenityList) ToStringSlice() []string {
-	s := make([]string, 0, len(l))
-	for k := range l {
-		s = append(s, k)
-	}
-
-	return s
-}
-
-func (l AmenityList) Add(amens ...string) {
-	for _, amen := range amens {
-		l[amen] = struct{}{}
-	}
-}
-
-func (l AmenityList) Merge(from AmenityList) {
-	for k := range from {
-		l[k] = struct{}{}
+		list.Delete(Pool)
 	}
 }

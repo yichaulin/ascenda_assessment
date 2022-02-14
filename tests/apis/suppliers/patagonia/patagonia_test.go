@@ -14,6 +14,7 @@ import (
 	"ascenda_assessment/configs"
 	"ascenda_assessment/tests/mock"
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/string_list"
 )
 
 func TestGetData(t *testing.T) {
@@ -45,10 +46,7 @@ func TestGetData(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		hIDs := map[string]struct{}{}
-		for _, id := range tc.hotelIDs {
-			hIDs[id] = struct{}{}
-		}
+		hIDs := string_list.New(tc.hotelIDs...)
 		data, err := patagonia.GetData(tc.destination, hIDs)
 		ass.Nil(err)
 		ass.Equal(tc.expectHotelCounts, len(data.([]patagonia.PatagoniaData)))
@@ -61,12 +59,9 @@ func TestParseAmenitiesToAmenityList(t *testing.T) {
 		"Aircon", "Tv", "Coffee machine", "Kettle", "Hair dryer", "Iron", "Tub", "Bar", unCodedAmenity,
 	}
 
-	expectGeneral := amen.AmenityList{}
-	expectGeneral.Add(amen.Bar)
-	expectRoom := amen.AmenityList{}
-	expectRoom.Add(amen.Aircon, amen.Tv, amen.CoffeeMachine, amen.Kettle, amen.HairDryer, amen.Iron, amen.Bathtub)
-	expectOthers := amen.AmenityList{}
-	expectOthers.Add(unCodedAmenity)
+	expectGeneral := string_list.New(amen.Bar)
+	expectRoom := string_list.New(amen.Aircon, amen.Tv, amen.CoffeeMachine, amen.Kettle, amen.HairDryer, amen.Iron, amen.Bathtub)
+	expectOthers := string_list.New(unCodedAmenity)
 
 	general, room, others := patagonia.ParseAmenitiesToAmenityList(amenities)
 	ass.Equal(true, reflect.DeepEqual(general, expectGeneral))

@@ -14,6 +14,7 @@ import (
 	"ascenda_assessment/configs"
 	"ascenda_assessment/tests/mock"
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/string_list"
 )
 
 func TestGetData(t *testing.T) {
@@ -45,10 +46,7 @@ func TestGetData(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		hIDs := map[string]struct{}{}
-		for _, id := range tc.hotelIDs {
-			hIDs[id] = struct{}{}
-		}
+		hIDs := string_list.New(tc.hotelIDs...)
 		data, err := paperflies.GetData(tc.destination, hIDs)
 		ass.Nil(err)
 		ass.Equal(tc.expectHotelCounts, len(data.([]paperflies.PaperfliesData)))
@@ -69,18 +67,15 @@ func TestParseAmenitiesToAmenityList(t *testing.T) {
 		},
 	}
 
-	expectGeneral := amen.AmenityList{}
-	expectGeneral.Add(
+	expectGeneral := string_list.New(
 		amen.OutdoorPool, amen.IndoorPool, amen.BusinessCenter, amen.Childcare,
 		amen.Parking, amen.Bar, amen.DryCleaning, amen.Wifi, amen.Breakfast, amen.Concierge,
 	)
-	expectRoom := amen.AmenityList{}
-	expectRoom.Add(
+	expectRoom := string_list.New(
 		amen.Tv, amen.CoffeeMachine, amen.Kettle, amen.HairDryer, amen.Iron,
 		amen.Minibar, amen.Bathtub, amen.Aircon,
 	)
-	expectOthers := amen.AmenityList{}
-	expectOthers.Add(unCodedGeneralAmenity, unCodedRoomAmenity)
+	expectOthers := string_list.New(unCodedGeneralAmenity, unCodedRoomAmenity)
 
 	general, room, others := paperflies.ParseAmenitiesToAmenityList(amenities)
 	ass.Equal(true, reflect.DeepEqual(general, expectGeneral))

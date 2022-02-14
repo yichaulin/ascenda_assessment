@@ -6,9 +6,10 @@ import (
 	"ascenda_assessment/apis/suppliers/acme"
 	"ascenda_assessment/apis/suppliers/paperflies"
 	"ascenda_assessment/apis/suppliers/patagonia"
+	"ascenda_assessment/utils/string_list"
 )
 
-func GetData(supplier string, destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
+func GetData(supplier string, destination uint64, hotelIDs string_list.StringList) (interface{}, error) {
 	switch supplier {
 	case acme.SupplierName:
 		return acme.GetData(destination, hotelIDs)

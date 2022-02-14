@@ -9,6 +9,7 @@ import (
 	"ascenda_assessment/configs"
 
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/string_list"
 	"ascenda_assessment/utils/supplier_data_filter"
 )
 
@@ -57,7 +58,7 @@ func (a ACMEData) GetDestinationID() uint64 {
 	return a.DestinationID
 }
 
-func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, error) {
+func GetData(destination uint64, hotelIDs string_list.StringList) (interface{}, error) {
 	acmeData := []ACMEData{}
 	supplierConfig, ok := configs.Cfg.Suppliers[SupplierName]
 	if !ok || !supplierConfig.Enabled {
@@ -83,10 +84,10 @@ func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, err
 	return acmeData, nil
 }
 
-func ParseFacilitiesToAmenityList(facilities []string) (general amen.AmenityList, room amen.AmenityList, others amen.AmenityList) {
-	general = amen.AmenityList{}
-	room = amen.AmenityList{}
-	others = amen.AmenityList{}
+func ParseFacilitiesToAmenityList(facilities []string) (general string_list.StringList, room string_list.StringList, others string_list.StringList) {
+	general = string_list.StringList{}
+	room = string_list.StringList{}
+	others = string_list.StringList{}
 
 	for _, f := range facilities {
 		f := strings.TrimSpace(f)

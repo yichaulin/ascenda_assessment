@@ -14,6 +14,7 @@ import (
 	"ascenda_assessment/configs"
 	"ascenda_assessment/tests/mock"
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/string_list"
 )
 
 func TestGetData(t *testing.T) {
@@ -45,10 +46,7 @@ func TestGetData(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		hIDs := map[string]struct{}{}
-		for _, id := range tc.hotelIDs {
-			hIDs[id] = struct{}{}
-		}
+		hIDs := string_list.New(tc.hotelIDs...)
 		data, err := acme.GetData(tc.destination, hIDs)
 		ass.Nil(err)
 		ass.Equal(tc.expectHotelCounts, len(data.([]acme.ACMEData)))
@@ -64,12 +62,9 @@ func TestParseFacilitiesToAmenityList(t *testing.T) {
 		unCodedAmenity,
 	}
 
-	expectGeneral := amen.AmenityList{}
-	expectGeneral.Add(amen.Pool, amen.BusinessCenter, amen.DryCleaning, amen.Breakfast, amen.Bar, amen.Wifi)
-	expectRoom := amen.AmenityList{}
-	expectRoom.Add(amen.Aircon, amen.Bathtub)
-	expectOthers := amen.AmenityList{}
-	expectOthers.Add(unCodedAmenity)
+	expectGeneral := string_list.New(amen.Pool, amen.BusinessCenter, amen.DryCleaning, amen.Breakfast, amen.Bar, amen.Wifi)
+	expectRoom := string_list.New(amen.Aircon, amen.Bathtub)
+	expectOthers := string_list.New(unCodedAmenity)
 
 	general, room, others := acme.ParseFacilitiesToAmenityList(facilities)
 	ass.Equal(true, reflect.DeepEqual(general, expectGeneral))

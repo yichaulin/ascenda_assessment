@@ -14,9 +14,9 @@ func (hm hotelMap) toHotelSlice() []*Hotel {
 	for _, h := range hm {
 		amen.CleanGeneralListDuplicatedItem(h.Amenities.GeneralList)
 
-		h.Amenities.General = h.Amenities.GeneralList.ToStringSlice()
-		h.Amenities.Room = h.Amenities.RoomList.ToStringSlice()
-		h.Amenities.Others = h.Amenities.OthersList.ToStringSlice()
+		h.Amenities.General = h.Amenities.GeneralList.ToSlice()
+		h.Amenities.Room = h.Amenities.RoomList.ToSlice()
+		h.Amenities.Others = h.Amenities.OthersList.ToSlice()
 		hotels = append(hotels, h)
 	}
 

@@ -10,7 +10,7 @@ import (
 	"ascenda_assessment/configs"
 	"ascenda_assessment/logger"
 
-	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/string_list"
 )
 
 type Hotel struct {
@@ -39,12 +39,12 @@ type Location struct {
 }
 
 type Amenities struct {
-	GeneralList amen.AmenityList `json:"-"`
-	RoomList    amen.AmenityList `json:"-"`
-	OthersList  amen.AmenityList `json:"-"`
-	General     []string         `json:"general"`
-	Room        []string         `json:"room"`
-	Others      []string         `json:"others"`
+	GeneralList string_list.StringList `json:"-"`
+	RoomList    string_list.StringList `json:"-"`
+	OthersList  string_list.StringList `json:"-"`
+	General     []string               `json:"general"`
+	Room        []string               `json:"room"`
+	Others      []string               `json:"others"`
 }
 
 type Images struct {
@@ -68,11 +68,7 @@ func GetHotels(destination string, hotelIDs []string) (hotels []*Hotel, err erro
 	hm := make(hotelMap)
 
 	destinationInt64, _ := strconv.ParseUint(destination, 10, 64)
-
-	hotelIDList := map[string]struct{}{}
-	for _, id := range hotelIDs {
-		hotelIDList[id] = struct{}{}
-	}
+	hotelIDList := string_list.New(hotelIDs...)
 
 	wg := new(sync.WaitGroup)
 	suppliers := supplier.GetAllSupplierNames()
@@ -97,9 +93,9 @@ func newHotel() *Hotel {
 	hotel := Hotel{
 		Location: &Location{},
 		Amenities: &Amenities{
-			GeneralList: amen.AmenityList{},
-			RoomList:    amen.AmenityList{},
-			OthersList:  amen.AmenityList{},
+			GeneralList: string_list.StringList{},
+			RoomList:    string_list.StringList{},
+			OthersList:  string_list.StringList{},
 		},
 		BookingConditions: []string{},
 		Images: Images{

@@ -7,6 +7,7 @@ import (
 
 	"ascenda_assessment/utils/amenities"
 	amen "ascenda_assessment/utils/amenities"
+	"ascenda_assessment/utils/string_list"
 )
 
 func TestCleanGeneralListDuplicatedItem(t *testing.T) {
@@ -34,10 +35,7 @@ func TestCleanGeneralListDuplicatedItem(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		l := amen.AmenityList{}
-		for _, a := range tc.list {
-			l.Add(a)
-		}
+		l := string_list.New(tc.list...)
 		amenities.CleanGeneralListDuplicatedItem(l)
 		_, isPoolExist := l[amen.Pool]
 		ass.Equal(tc.expect, isPoolExist)
