@@ -35,6 +35,11 @@ func TestGetHotels(t *testing.T) {
 			expectError:       nil,
 		},
 		{
+			hotelIDs:          []string{"SjyX", "iJhz", "InvalidID"},
+			expectHotelCounts: 2,
+			expectError:       nil,
+		},
+		{
 			destination:       "1122",
 			hotelIDs:          []string{},
 			expectHotelCounts: 1,
