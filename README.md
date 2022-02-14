@@ -10,7 +10,8 @@ Get hotels information
     ```
 - Description:
     - If request with both `desination_id` and `hotel_ids[]`, it would return hotels that matches destination id and and hotel id.
-    - If request with only `desination_id`, it would return all hotels that matches destination id.
+    - If request with only `desination_id`, it would return all hotels that match destination id.
+    - If request with only `hotel_ids[]`, it would return all hotels that match hotel ids.
     - If request without `desination_id` and `hotel_ids[]`, it would return `400` http status code, and invalid imput msg.
     - If any unexpected error, it would return `500` http status code with internal server error msg, and log error details.
 

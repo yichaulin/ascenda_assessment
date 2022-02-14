@@ -94,7 +94,9 @@ func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, err
 	paperfliesData = make([]PaperfliesData, 0, len(tmp))
 	for _, hotel := range tmp {
 		_, matchHotelID := hotelIDs[hotel.HotelID]
-		if (matchHotelID && hotel.DestinationID == destination) || (len(hotelIDs) == 0 && hotel.DestinationID == destination) {
+		if (matchHotelID && hotel.DestinationID == destination) ||
+			(len(hotelIDs) == 0 && hotel.DestinationID == destination) ||
+			(matchHotelID && destination == 0) {
 			paperfliesData = append(paperfliesData, hotel)
 		}
 	}

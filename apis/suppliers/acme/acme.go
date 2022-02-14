@@ -67,7 +67,9 @@ func GetData(destination uint64, hotelIDs map[string]struct{}) (interface{}, err
 	acmeData = make([]ACMEData, 0, len(tmp))
 	for _, hotel := range tmp {
 		_, matchHotelID := hotelIDs[hotel.ID]
-		if (matchHotelID && hotel.DestinationID == destination) || (len(hotelIDs) == 0 && hotel.DestinationID == destination) {
+		if (matchHotelID && hotel.DestinationID == destination) ||
+			(len(hotelIDs) == 0 && hotel.DestinationID == destination) ||
+			(matchHotelID && destination == 0) {
 			acmeData = append(acmeData, hotel)
 		}
 	}

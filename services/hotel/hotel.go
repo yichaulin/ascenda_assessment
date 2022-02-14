@@ -67,10 +67,7 @@ func GetHotels(destination string, hotelIDs []string) (hotels []*Hotel, err erro
 
 	hm := make(hotelMap)
 
-	destinationInt64, err := strconv.ParseUint(destination, 10, 64)
-	if err != nil {
-		return hotels, err
-	}
+	destinationInt64, _ := strconv.ParseUint(destination, 10, 64)
 
 	hotelIDList := map[string]struct{}{}
 	for _, id := range hotelIDs {
