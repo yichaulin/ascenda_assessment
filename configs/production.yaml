@@ -1,0 +1,40 @@
+suppliers:
+  acme:
+    url: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/acme
+    enabled: true
+    timeout: 10 #Seconds
+  patagonia:
+    url: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/patagonia
+    enabled: true
+    timeout: 10 #Seconds
+  paperflies:
+    url: https://5f2be0b4ffc88500167b85a0.mockapi.io/suppliers/paperflies
+    enabled: true
+    timeout: 10 #Seconds
+
+supplier_data_priorities:
+  # 0 value is default value if supplier is not setup. DO NOT setup as 0 value
+  hotel_name:
+    acme: 1
+    patagonia: 2
+    paperflies: 3
+  hotel_address:
+    acme: 1
+    patagonia: 2
+    paperflies: 3
+  hotel_description:
+    acme: 1
+    patagonia: 2
+    paperflies: 3
+  hotel_country:
+    acme: 1
+    patagonia: 2
+    paperflies: 3
+  hotel_city:
+    acme: 1
+    patagonia: 2
+    paperflies: 3
+  hotel_lat_lng:
+    acme: 1
+    patagonia: 2
+    paperflies: 3

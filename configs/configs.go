@@ -50,17 +50,17 @@ func init() {
 		logErrorAndExit(err)
 	}
 
+	err = yaml.Unmarshal(fileByte, &Cfg)
+	if err != nil {
+		logErrorAndExit(err)
+	}
+
 	suppliers := struct {
 		suppliers []Supplier `yaml:"suppliers"`
 	}{}
 	err = yaml.Unmarshal(fileByte, &suppliers)
 	for _, s := range suppliers.suppliers {
 		Cfg.Suppliers[s.Name] = s
-	}
-
-	err = yaml.Unmarshal(fileByte, &Cfg)
-	if err != nil {
-		logErrorAndExit(err)
 	}
 }
 
